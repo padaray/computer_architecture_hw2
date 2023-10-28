@@ -1,0 +1,24 @@
+.PHONY: clean
+
+include ../../../mk/toolchain.mk
+
+CFLAGS = -march=rv32i -mabi=ilp32
+ASFLAGS = -march=rv32i -mabi=ilp32
+LDFLAGS = --oformat=elf32-littleriscv
+
+%.S: %.c
+	$(CROSS_COMPILE)gcc $(CFLAGS) -o $@ -S $<
+
+%.o: %.S
+	$(CROSS_COMPILE)as $(ASFLAGS) -o $@ $<
+
+all: hugohw.elf
+
+hugohw.S: hugohw.c
+	$(CROSS_COMPILE)gcc $(CFLAGS) -o $@ -S $<
+
+hugohw.elf: hugohw.o
+	 $(CROSS_COMPILE)gcc -o $@ $<
+
+clean:
+	$(RM) hugohw.elf hugohw.o hugohw.S
